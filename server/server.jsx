@@ -74,7 +74,9 @@ const setupServer = (app) => {
 
     const { content } = req.body;
 
-    article.create(req.params[0], content)
+    const uid = req.user ? req.user.id : '';
+
+    article.create(req.params[0], content, uid, req.ip)
       .then(result => res.send(result))
       .catch(error => {
         console.log({ file, func, error });
@@ -247,17 +249,23 @@ function renderHtml(appHtml, initialState) {
   return `
     <!doctype html public="storage">
     <html>
-    <meta charset=utf-8/>
-    <title>helloworld-lambda-web</title>
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css">
-    <!-- Optional theme -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap-theme.min.css">
-    <div id=app>${appHtml}</div>
-    <script>
-      window.__INITIAL_STATE__ = ${JSON.stringify(initialState)};
-    </script>
-    <script src="/bundle.js"></script>
+      <head>
+        <meta charset=utf-8/>
+        <title>helloworld-lambda-web</title>
+
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <!-- Optional theme -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+      </head>
+      <body>
+        <div id=app>${appHtml}</div>
+        <script>
+          window.__INITIAL_STATE__ = ${JSON.stringify(initialState)};
+        </script>
+        <script src="/bundle.js"></script>
+      </body>
+    </html>
   `;
 }
 
